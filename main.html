@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blazor App</title>
+</head>
+<body>
+    <div id="content">Loading...</div>
+
+    <script>
+        fetch('https://replit.com/@topgsuperm5/Blazor-test?v=1')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('content').innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Error fetching content:', error);
+                document.getElementById('content').innerHTML = 'Failed to load content.';
+            });
+    </script>
+</body>
+</html>
