@@ -3,21 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blazor App</title>
+    <title>Fetch Content</title>
 </head>
 <body>
-    <div id="content">Loading...</div>
-
+    <div id="content"></div>
     <script>
-        fetch('https://replit.com/@topgsuperm5/Blazor-test?v=1') 
+        // Fetch content from the URL
+        fetch('https://7d439a7e-e827-4357-8b29-4a4020bb7c1e-00-116614fzntx1p.picard.replit.dev/')
             .then(response => response.text())
             .then(data => {
+                // Update the content of the div with the fetched data
                 document.getElementById('content').innerHTML = data;
             })
-            .catch(error => {
-                console.error('Error fetching content:', error);
-                document.getElementById('content').innerHTML = 'Failed to load content.';
-            });
+            .catch(error => console.error('Error fetching content:', error));
     </script>
 </body>
 </html>
