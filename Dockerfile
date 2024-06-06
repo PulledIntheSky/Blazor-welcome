@@ -2,7 +2,7 @@
 FROM ubuntu:latest
 
 # Install required packages
-RUN apt-get update && apt-get install -y wget sudo passwd
+RUN apt-get update && apt-get install -y wget sudo passwd apt-transport-https gnupg
 
 # Create a non-root user
 RUN useradd -m cloudflared_user && echo "cloudflared_user:password" | chpasswd && usermod -aG sudo cloudflared_user
@@ -22,9 +22,9 @@ RUN wget https://github.com/cloudflare/cloudflared/releases/latest/download/clou
     chmod +x /usr/local/bin/cloudflared && chown cloudflared_user:cloudflared_user /usr/local/bin/cloudflared
 
 # Install Cloudflare Warp
-RUN wget https://pkg.cloudflareclient.com/uploads/cloudflare_warp_2023_06_01_amd64.deb
-RUN dpkg -i cloudflare_warp_2023_06_01_amd64.deb
-RUN rm cloudflare_warp_2023_06_01_amd64.deb
+RUN wget https://pkg.cloudflareclient.com/pubkey.gpg -O /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/cloudflare-client.list
+RUN apt-get update && apt-get install -y cloudflare-warp
 
 # Copy the credentials file and cert.pem from GitHub
 USER cloudflared_user
