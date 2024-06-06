@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y wget sudo apt-transport-https gnupg cur
 RUN curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
 
 # Remove existing Cloudflare sources list file
-RUN rm /etc/apt/sources.list.d/cloudflare-client.list
+RUN rm -f /etc/apt/sources.list.d/cloudflare-client.list
 
 # Add Cloudflare Warp repository to apt sources list
 # Manually specify the release codename instead of relying on lsb_release
