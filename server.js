@@ -1,11 +1,5 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
-const esmRequire = require('esm')(module /*, options*/);
-module.exports = esmRequire('./server.cjs');
-
-import express from 'express';
-import fetch from 'node-fetch'; // Import the node-fetch library
+const express = require('express');
+const fetch = require('node-fetch'); // Import the node-fetch library
 
 const app = express();
 const PORT = process.env.PORT || 3000;
