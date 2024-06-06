@@ -10,8 +10,11 @@ RUN curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor 
 # Add Cloudflare Warp repository to apt sources list
 RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
 
-# Update package index and install Cloudflare Warp
-RUN apt-get update && apt-get install -y cloudflare-warp
+# Update package index
+RUN apt-get update
+
+# Install Cloudflare Warp
+RUN apt-get install -y cloudflare-warp
 
 # Cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
