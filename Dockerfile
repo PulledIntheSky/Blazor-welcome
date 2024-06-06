@@ -45,8 +45,8 @@ RUN echo "<mdm>" \
 
 # Create entrypoint.sh script with required content
 RUN echo '#!/bin/bash' > /usr/local/bin/entrypoint.sh && \
-    echo '/path/to/warp-cli login' >> /usr/local/bin/entrypoint.sh && \
-    echo '/path/to/warp-cli start' >> /usr/local/bin/entrypoint.sh && \
+    echo '/usr/bin/warp-cli login' >> /usr/local/bin/entrypoint.sh && \
+    echo '/usr/bin/warp-cli start' >> /usr/local/bin/entrypoint.sh && \
     echo '/usr/local/etc/cloudflared tunnel --config /etc/mdm.xml' >> /usr/local/bin/entrypoint.sh && \
     chmod +x /usr/local/bin/entrypoint.sh
 
