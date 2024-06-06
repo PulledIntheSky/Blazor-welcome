@@ -15,11 +15,7 @@ RUN wget https://github.com/cloudflare/cloudflared/releases/latest/download/clou
     chmod +x /usr/local/bin/cloudflared
 
 # Copy the credentials file
-COPY /root/.cloudflared/*.json /usr/local/etc/cloudflared/
-
-# Create a configuration file for the tunnel
-RUN echo "credentials-file: /usr/local/etc/cloudflared/credentials.json" > /usr/local/etc/cloudflared/config.yml
-RUN echo "no-autoupdate: true" >> /usr/local/etc/cloudflared/config.yml
+COPY credentials.json /usr/local/etc/cloudflared/
 
 # Start the Cloudflared tunnel and serve the index.html file
-CMD ["cloudflared", "tunnel", "run", "--config", "/usr/local/etc/cloudflared/config.yml", "--url", "http://localhost:80", "my-tunnel"]
+CMD ["cloudflared", "tunnel", "run", "--token", "$CLOUDFLARED_TOKEN", "--config", "/usr/local/etc/cloudflared/config.yml", "--hello-world"]
