@@ -1,66 +1,14 @@
-# Stage 1: Build environment
-FROM ubuntu:latest AS build
+# Use a lightweight Node.js image
+FROM node:alpine
 
-# Install required packages including curl
-RUN apt-get update && apt-get install -y wget sudo apt-transport-https gnupg curl
+# Set the working directory in the container
+WORKDIR /usr/src/app
 
-# Download Cloudflare Warp repository key and add it to the keyring
-RUN curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+# Install curl
+RUN apk --no-cache add curl
 
-# Remove existing Cloudflare sources list file
-RUN rm -f /etc/apt/sources.list.d/cloudflare-client.list
+# Expose port 8080 to access the HTTP server
+EXPOSE 8080
 
-# Add Cloudflare Warp repository to apt sources list
-# Manually specify the release codename instead of relying on lsb_release
-RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ focal main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
-
-# Update package index
-RUN apt-get update
-
-# Install Cloudflare Warp
-RUN apt-get install -y cloudflare-warp
-
-# Cleanup
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Find the path to warp-cli
-RUN which warp-cli
-
-# Define the content of mdm.xml file using GitHub environment variables
-ARG AUTH_CLIENT_ID=$AUTH_CLIENT_ID
-ARG AUTH_CLIENT_SECRET=$AUTH_CLIENT_SECRET
-ARG WARP_CONNECTOR_TOKEN=$WARP_CONNECTOR_TOKEN
-
-# Echo the content into mdm.xml file
-RUN echo "<mdm>" \
-    "<key>organization</key>" \
-    "<string>leslywasabi</string>" \
-    "<key>auth_client_id</key>" \
-    "<string>$AUTH_CLIENT_ID</string>" \
-    "<key>auth_client_secret</key>" \
-    "<string>$AUTH_CLIENT_SECRET</string>" \
-    "<key>warp_connector_token</key>" \
-    "<string>$WARP_CONNECTOR_TOKEN</string>" \
-    "</mdm>" > /etc/mdm.xml
-
-# Download entrypoint.sh script from GitHub and copy it to the correct location
-RUN wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/entrypoint.sh -O /usr/bin/entrypoint.sh && \
-    chmod +x /usr/bin/entrypoint.sh
-
-# Stage 2: Runtime environment
-FROM ubuntu:latest
-
-# Copy mdm.xml from the build environment
-COPY --from=build /etc/mdm.xml /etc/mdm.xml
-
-# Copy HTML file to serve
-COPY index.html /usr/src/app/index.html
-
-# Set execute permissions on entrypoint.sh
-RUN chmod +x /usr/bin/entrypoint.sh
-
-# Expose port 80 for serving HTML content
-EXPOSE 80
-
-# Run the script to start Cloudflare Warp service and establish connection
-CMD ["/usr/bin/entrypoint.sh"]
+# Start the HTTP server to proxy the Cloudflare Worker response
+CMD ["sh", "-c", "while true; do curl -s https://morning-grass-e0ab.tempest-d22.workers.dev/ > index.html && echo 'HTTP/1.0 200 OK\r\nContent-Length: $(wc -c < index.html)\r\nContent-Type: text/html\r\n\r\n' | cat - index.html | nc -l -p 8080; done"]
