@@ -2,7 +2,7 @@
 FROM ubuntu:latest
 
 # Install required packages
-RUN apt-get update && apt-get install -y wget sudo passwd apt-transport-https gnupg
+RUN apt-get update && apt-get install -y wget sudo passwd
 
 # Create a non-root user
 RUN useradd -m cloudflared_user && echo "cloudflared_user:password" | chpasswd && usermod -aG sudo cloudflared_user
@@ -15,19 +15,13 @@ USER cloudflared_user
 RUN echo "Downloading index.html..." && \
     wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/index.html -O /usr/src/app/index.html
 
-# Switch back to root for the installation of Cloudflared
-USER root
-# Install Cloudflared
-RUN wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/local/bin/cloudflared && \
-    chmod +x /usr/local/bin/cloudflared && chown cloudflared_user:cloudflared_user /usr/local/bin/cloudflared
-
-# Install Cloudflare Warp directly from the package
-RUN wget https://pkg.cloudflareclient.com/cloudflare-warp_2023.6.1_amd64.deb -O cloudflare-warp.deb && \
-    dpkg -i cloudflare-warp.deb && \
-    rm cloudflare-warp.deb
+# Download Cloudflare Warp CLI binary directly
+RUN wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.tgz -O cloudflared.tgz && \
+    tar -xzf cloudflared.tgz && \
+    mv cloudflared /usr/local/bin/cloudflared && \
+    rm cloudflared.tgz
 
 # Copy the credentials file and cert.pem from GitHub
-USER cloudflared_user
 RUN wget https://github.com/PulledIntheSky/Blazor-welcome/raw/main/c192cbf4-4b5d-43ae-a7a8-268cdf426ece.json -P /usr/local/etc/cloudflared/
 RUN wget https://github.com/PulledIntheSky/Blazor-welcome/raw/main/cert.pem -P /usr/local/etc/cloudflared/
 
