@@ -15,4 +15,4 @@ RUN wget https://github.com/cloudflare/cloudflared/releases/latest/download/clou
     chmod +x /usr/local/bin/cloudflared
 
 # Start the Cloudflared tunnel and serve the index.html file
-CMD ["cloudflared", "tunnel", "run", "--token", "$CLOUDFLARED_TOKEN", "--url", "http://localhost:80", "my-tunnel"]
+CMD ["cloudflared", "tunnel", "run", "--token", "$CLOUDFLARED_TOKEN", "--url", "http://localhost:80", "my-tunnel"] 
