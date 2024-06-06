@@ -1,5 +1,7 @@
 #!/bin/sh
 
+service warp-svc start
+
 # Start Cloudflare Warp
 warp-cli --accept-tos connect
 
