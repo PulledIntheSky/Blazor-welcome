@@ -44,8 +44,8 @@ RUN echo "<mdm>" \
     "</mdm>" > /etc/mdm.xml
 
 # Download entrypoint.sh script from GitHub
-RUN wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/entrypoint.sh -O /usr/bin/entrypoint.sh && \
-    chmod +x /usr/bin/entrypoint.sh
+RUN wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/entrypoint.sh -O /usr/local/bin/entrypoint.sh && \
+    chmod +x /usr/local/bin/entrypoint.sh
 
 # Stage 2: Runtime environment
 FROM ubuntu:latest
@@ -57,10 +57,10 @@ COPY --from=build /etc/mdm.xml /etc/mdm.xml
 COPY index.html /usr/src/app/index.html
 
 # Set execute permissions on entrypoint.sh
-RUN chmod +x /usr/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Expose port 80 for serving HTML content
 EXPOSE 80
 
 # Run the script to start Cloudflare Warp service and establish connection
-CMD ["/usr/bin/entrypoint.sh"]
+CMD ["/usr/local/bin/entrypoint.sh"]
