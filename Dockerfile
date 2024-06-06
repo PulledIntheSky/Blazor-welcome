@@ -1,8 +1,8 @@
 # Stage 1: Build environment
 FROM ubuntu:latest AS build
 
-# Install required packages
-RUN apt-get update && apt-get install -y wget sudo apt-transport-https gnupg
+# Install required packages including curl
+RUN apt-get update && apt-get install -y wget sudo apt-transport-https gnupg curl
 
 # Download Cloudflare Warp repository key and add it to the keyring
 RUN curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
@@ -26,7 +26,7 @@ RUN echo "<mdm>" \
     "<key>organization</key>" \
     "<string>leslywasabi</string>" \
     "<key>auth_client_id</key>" \
-    "<string>$AUTH_CLIENT_ID</string>" \ 
+    "<string>$AUTH_CLIENT_ID</string>" \
     "<key>auth_client_secret</key>" \
     "<string>$AUTH_CLIENT_SECRET</string>" \
     "<key>warp_connector_token</key>" \
