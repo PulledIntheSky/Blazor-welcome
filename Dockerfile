@@ -3,8 +3,8 @@ FROM alpine:latest
 # Install required packages
 RUN apk --no-cache add wget
 
-# Create directory for app files
-RUN mkdir -p /usr/src/app
+# Create directory for app files and Cloudflared configuration
+RUN mkdir -p /usr/src/app /usr/local/etc/cloudflared
 
 # Download HTML page and certificate file from GitHub repository
 RUN echo "Downloading index.html..." && \
