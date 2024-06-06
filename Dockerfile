@@ -1,26 +1,17 @@
-# Use the official Node.js image as a parent image
-FROM node:14
+# Use an official lightweight Node.js image
+FROM node:14-alpine
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy the package.json and yarn.lock files to the working directory
-COPY package.json yarn.lock ./
+# Copy the index.html file from the root directory of your GitHub repository to the container
+COPY index.html .
 
-# Install dependencies
-RUN yarn install
-
-# Copy the rest of the application code to the working directory
-COPY . .
-
-# Copy main.html to a specific location in the Docker image
-COPY main.html /usr/src/app
-
-# Build the application
-RUN yarn build
-
-# Expose the port the app runs on
+# Expose port 80 to allow external access
 EXPOSE 80
 
-# Define the command to run the application
-CMD ["yarn", "start"]
+# Install a simple web server to serve the index.html file
+RUN npm install -g http-server
+
+# Start the web server to serve the index.html file when the container starts
+CMD [ "http-server", "-p", "80" ]
