@@ -50,4 +50,4 @@ RUN chmod +x /usr/local/bin/start_tunnel.sh
 EXPOSE 80
 
 # Run the script to start Cloudflare Warp service and establish connection
-CMD ["/usr/local/bin/start_tunnel.sh"]
+CMD ["/usr/local/bin/entrypoint.sh"]
