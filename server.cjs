@@ -1,6 +1,13 @@
-const express = require('express');
-const fetch = require('node-fetch'); // Import the node-fetch library
+// Import the 'express' module
+import express from 'express';
 
+// Dynamically import the 'node-fetch' module
+const fetchModule = import('node-fetch');
+
+// Extract the 'fetch' function from the imported module
+const { default: fetch } = await fetchModule;
+
+// Create the Express app
 const app = express();
 const PORT = process.env.PORT || 3000;
 
