@@ -1,11 +1,26 @@
-# Use an official nginx image to serve the static HTML file
-FROM nginx:alpine
+# Use the official Node.js image as a parent image
+FROM node:14
 
-# Copy the static HTML file to the nginx html directory
-COPY main.html /usr/share/nginx/html/main.html
+# Set the working directory
+WORKDIR /usr/src/app
 
-# Expose port 80
+# Copy the package.json and yarn.lock files to the working directory
+COPY package.json yarn.lock ./
+
+# Install dependencies
+RUN yarn install
+
+# Copy the rest of the application code to the working directory
+COPY . .
+
+# Copy main.html to a specific location in the Docker image
+COPY main.html /usr/src/app
+
+# Build the application
+RUN yarn build
+
+# Expose the port the app runs on
 EXPOSE 80
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Define the command to run the application
+CMD ["yarn", "start"]
