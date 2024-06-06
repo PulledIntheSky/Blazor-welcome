@@ -49,9 +49,6 @@ COPY --from=build /etc/mdm.xml /etc/mdm.xml
 # Copy HTML file to serve
 COPY index.html /usr/src/app/index.html
 
-# Install Cloudflare Warp binaries
-RUN apt-get update && apt-get install -y cloudflare-warp
-
 # Create a script to start Cloudflare Warp service and establish connection
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
