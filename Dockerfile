@@ -1,41 +1,53 @@
-# Use a base image
-FROM ubuntu:latest
+# Stage 1: Build environment
+FROM ubuntu:latest AS build
 
 # Install required packages
-RUN apt-get update && apt-get install -y wget sudo passwd
+RUN apt-get update && apt-get install -y wget sudo apt-transport-https gnupg
 
-# Create a non-root user
-RUN useradd -m cloudflared_user && echo "cloudflared_user:password" | chpasswd && usermod -aG sudo cloudflared_user
+# Download Cloudflare Warp repository key and add it to the keyring
+RUN curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
 
-# Create directory for app files and Cloudflared configuration
-RUN mkdir -p /usr/src/app /usr/local/etc/cloudflared && chown -R cloudflared_user:cloudflared_user /usr/src/app /usr/local/etc/cloudflared
+# Add Cloudflare Warp repository to apt sources list
+RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
 
-# Download HTML page from GitHub repository as the new user
-USER cloudflared_user
-RUN echo "Downloading index.html..." && \
-    wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/index.html -O /usr/src/app/index.html
+# Update package index and install Cloudflare Warp
+RUN apt-get update && apt-get install -y cloudflare-warp
 
-# Download Cloudflare Warp CLI binary directly
-RUN wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.tgz -O cloudflared.tgz && \
-    tar -xzf cloudflared.tgz && \
-    mv cloudflared /usr/local/bin/cloudflared && \
-    rm cloudflared.tgz
+# Cleanup
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy the credentials file and cert.pem from GitHub
-RUN wget https://github.com/PulledIntheSky/Blazor-welcome/raw/main/c192cbf4-4b5d-43ae-a7a8-268cdf426ece.json -P /usr/local/etc/cloudflared/
-RUN wget https://github.com/PulledIntheSky/Blazor-welcome/raw/main/cert.pem -P /usr/local/etc/cloudflared/
+# Define the content of mdm.xml file using GitHub environment variables
+ARG AUTH_CLIENT_ID=$AUTH_CLIENT_ID
+ARG AUTH_CLIENT_SECRET=$AUTH_CLIENT_SECRET
+ARG WARP_CONNECTOR_TOKEN=$WARP_CONNECTOR_TOKEN
 
-# Create a configuration file for the tunnel
-RUN echo "credentials-file: /usr/local/etc/cloudflared/c192cbf4-4b5d-43ae-a7a8-268cdf426ece.json" > /usr/local/etc/cloudflared/config.yml
-RUN echo "no-autoupdate: true" >> /usr/local/etc/cloudflared/config.yml
+# Echo the content into mdm.xml file
+RUN echo "<mdm>" \
+    "<key>organization</key>" \
+    "<string>leslywasabi</string>" \
+    "<key>auth_client_id</key>" \
+    "<string>$AUTH_CLIENT_ID</string>" \
+    "<key>auth_client_secret</key>" \
+    "<string>$AUTH_CLIENT_SECRET</string>" \
+    "<key>warp_connector_token</key>" \
+    "<string>$WARP_CONNECTOR_TOKEN</string>" \
+    "</mdm>" > /etc/mdm.xml
 
-# Download the entrypoint script from GitHub
-USER root
-RUN wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/entrypoint.sh -O /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# Stage 2: Runtime environment
+FROM ubuntu:latest
 
-# Expose port 80 for serving the HTML file
+# Copy mdm.xml from the build environment
+COPY --from=build /etc/mdm.xml /etc/mdm.xml
+
+# Copy HTML file to serve
+COPY index.html /usr/src/app/index.html
+
+# Create a script to start Cloudflare Warp service and establish connection
+COPY start_tunnel.sh /usr/local/bin/start_tunnel.sh
+RUN chmod +x /usr/local/bin/start_tunnel.sh
+
+# Expose port 80 for serving HTML content
 EXPOSE 80
 
-# Use the entrypoint script
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# Run the script to start Cloudflare Warp service and establish connection
+CMD ["/usr/local/bin/start_tunnel.sh"]
