@@ -21,6 +21,11 @@ USER root
 RUN wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/local/bin/cloudflared && \
     chmod +x /usr/local/bin/cloudflared && chown cloudflared_user:cloudflared_user /usr/local/bin/cloudflared
 
+# Install Cloudflare Warp
+RUN wget https://pkg.cloudflareclient.com/uploads/cloudflare_warp_2023_06_01_amd64.deb
+RUN dpkg -i cloudflare_warp_2023_06_01_amd64.deb
+RUN rm cloudflare_warp_2023_06_01_amd64.deb
+
 # Copy the credentials file and cert.pem from GitHub
 USER cloudflared_user
 RUN wget https://github.com/PulledIntheSky/Blazor-welcome/raw/main/c192cbf4-4b5d-43ae-a7a8-268cdf426ece.json -P /usr/local/etc/cloudflared/
