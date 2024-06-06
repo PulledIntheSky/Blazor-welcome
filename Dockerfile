@@ -9,7 +9,7 @@ RUN curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor 
 
 # Add Cloudflare Warp repository to apt sources list
 # Manually specify the release codename instead of relying on lsb_release
-RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ focal main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
+RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
 
 # Update package index
 RUN apt-get update
@@ -45,9 +45,6 @@ COPY --from=build /etc/mdm.xml /etc/mdm.xml
 
 # Copy HTML file to serve
 COPY index.html /usr/src/app/index.html
-
-# Install Cloudflare Warp binaries
-RUN apt-get update && apt-get install -y cloudflare-warp
 
 # Create a script to start Cloudflare Warp service and establish connection
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
