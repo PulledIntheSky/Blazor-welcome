@@ -43,11 +43,8 @@ RUN echo "<mdm>" \
     "<string>$WARP_CONNECTOR_TOKEN</string>" \
     "</mdm>" > /etc/mdm.xml
 
-# Create entrypoint.sh script with required content
-RUN echo '#!/bin/bash' > /usr/bin/entrypoint.sh && \
-    echo '/usr/bin/warp-cli login' >> /usr/bin/entrypoint.sh && \
-    echo '/usr/bin/warp-cli start' >> /usr/bin/entrypoint.sh && \
-    echo '/usr/local/etc/cloudflared tunnel --config /etc/mdm.xml' >> /usr/bin/entrypoint.sh && \
+# Download entrypoint.sh script from GitHub
+RUN wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/entrypoint.sh -O /usr/bin/entrypoint.sh && \
     chmod +x /usr/bin/entrypoint.sh
 
 # Stage 2: Runtime environment
