@@ -27,4 +27,4 @@ RUN echo "no-autoupdate: true" >> /usr/local/etc/cloudflared/config.yml
 EXPOSE 80
 
 # Start the Cloudflared tunnel and serve the index.html file
-CMD ["cloudflared", "tunnel", "run", "--config", "/usr/local/etc/cloudflared/config.yml", "--url", "http://localhost:80", "my-tunnel"]
+CMD ["cloudflared", "tunnel", "--config", "/usr/local/etc/cloudflared/config.yml", "--url", "http://localhost:80", "--no-autoupdate", "true"]
