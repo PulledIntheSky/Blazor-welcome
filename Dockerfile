@@ -1,14 +1,11 @@
 FROM alpine:latest
 
 # Install required packages
-RUN apk --no-cache add wget unzip
+RUN apk --no-cache add wget
 
 # Download and install Cloudflared
-RUN wget https://bin.equinox.io/c/VdrWdbjqyF/cloudflared-stable-linux-amd64.tgz && \
-    tar -xvzf cloudflared-stable-linux-amd64.tgz && \
-    mv ./cloudflared /usr/local/bin && \
-    chmod +x /usr/local/bin/cloudflared && \
-    rm -rf cloudflared-stable-linux-amd64.tgz
+RUN wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/local/bin/cloudflared && \
+    chmod +x /usr/local/bin/cloudflared
 
 # Download HTML page from GitHub repository
 RUN wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/index.html -O /usr/src/app/index.html
