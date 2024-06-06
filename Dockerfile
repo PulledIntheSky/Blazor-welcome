@@ -44,11 +44,11 @@ RUN echo "<mdm>" \
     "</mdm>" > /etc/mdm.xml
 
 # Create entrypoint.sh script with required content
-RUN echo '#!/bin/bash' > /usr/local/bin/entrypoint.sh && \
-    echo '/usr/bin/warp-cli login' >> /usr/local/bin/entrypoint.sh && \
-    echo '/usr/bin/warp-cli start' >> /usr/local/bin/entrypoint.sh && \
-    echo '/usr/local/etc/cloudflared tunnel --config /etc/mdm.xml' >> /usr/local/bin/entrypoint.sh && \
-    chmod +x /usr/local/bin/entrypoint.sh
+RUN echo '#!/bin/bash' > /usr/bin/entrypoint.sh && \
+    echo '/usr/bin/warp-cli login' >> /usr/bin/entrypoint.sh && \
+    echo '/usr/bin/warp-cli start' >> /usr/bin/entrypoint.sh && \
+    echo '/usr/local/etc/cloudflared tunnel --config /etc/mdm.xml' >> /usr/bin/entrypoint.sh && \
+    chmod +x /usr/bin/entrypoint.sh
 
 # Stage 2: Runtime environment
 FROM ubuntu:latest
