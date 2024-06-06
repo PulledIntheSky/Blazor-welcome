@@ -2,10 +2,10 @@
 FROM ubuntu:latest
 
 # Install required packages
-RUN apt-get update && apt-get install -y wget sudo
+RUN apt-get update && apt-get install -y wget sudo passwd
 
 # Create a non-root user
-RUN useradd -m cloudflared_user && echo "cloudflared_user:password" | chpasswd && adduser cloudflared_user sudo
+RUN useradd -m cloudflared_user && echo "cloudflared_user:password" | chpasswd && usermod -aG sudo cloudflared_user
 
 # Create directory for app files and Cloudflared configuration
 RUN mkdir -p /usr/src/app /usr/local/etc/cloudflared && chown -R cloudflared_user:cloudflared_user /usr/src/app /usr/local/etc/cloudflared
