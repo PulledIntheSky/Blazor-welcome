@@ -40,6 +40,12 @@ RUN echo "<mdm>" \
     "<string>$WARP_CONNECTOR_TOKEN</string>" \
     "</mdm>" > /etc/mdm.xml
 
+# Create entrypoint.sh script with required content
+RUN echo '#!/bin/bash' > /usr/local/bin/entrypoint.sh && \
+    echo 'warp-cli login' >> /usr/local/bin/entrypoint.sh && \
+    echo 'cloudflared tunnel --config /etc/mdm.xml' >> /usr/local/bin/entrypoint.sh && \
+    chmod +x /usr/local/bin/entrypoint.sh
+
 # Stage 2: Runtime environment
 FROM ubuntu:latest
 
@@ -49,8 +55,10 @@ COPY --from=build /etc/mdm.xml /etc/mdm.xml
 # Copy HTML file to serve
 COPY index.html /usr/src/app/index.html
 
-# Create a script to start Cloudflare Warp service and establish connection
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+# Copy the entrypoint.sh script from the build environment
+COPY --from=build /usr/local/bin/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Set execute permissions on entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Expose port 80 for serving HTML content
