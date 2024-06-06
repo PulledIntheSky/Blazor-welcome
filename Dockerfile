@@ -43,8 +43,8 @@ COPY --from=build /etc/mdm.xml /etc/mdm.xml
 COPY index.html /usr/src/app/index.html
 
 # Create a script to start Cloudflare Warp service and establish connection
-COPY start_tunnel.sh /usr/local/bin/start_tunnel.sh
-RUN chmod +x /usr/local/bin/start_tunnel.sh
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Expose port 80 for serving HTML content
 EXPOSE 80
