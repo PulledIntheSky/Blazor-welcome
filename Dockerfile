@@ -7,7 +7,9 @@ RUN apk --no-cache add wget
 RUN mkdir -p /usr/src/app
 
 # Download HTML page and certificate file from GitHub repository
-RUN wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/index.html -O /usr/src/app/index.html && \
+RUN echo "Downloading index.html..." && \
+    wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/index.html -O /usr/src/app/index.html && \
+    echo "Downloading cert.pem..." && \
     wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/cert.pem -O /usr/local/etc/cloudflared/cert.pem
 
 # Install Cloudflared
