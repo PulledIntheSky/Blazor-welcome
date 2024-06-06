@@ -26,7 +26,7 @@ RUN echo "<mdm>" \
     "<key>organization</key>" \
     "<string>leslywasabi</string>" \
     "<key>auth_client_id</key>" \
-    "<string>$AUTH_CLIENT_ID</string>" \
+    "<string>$AUTH_CLIENT_ID</string>" \ 
     "<key>auth_client_secret</key>" \
     "<string>$AUTH_CLIENT_SECRET</string>" \
     "<key>warp_connector_token</key>" \
