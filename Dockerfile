@@ -59,14 +59,11 @@ COPY --from=build /etc/mdm.xml /etc/mdm.xml
 # Copy HTML file to serve
 COPY index.html /usr/src/app/index.html
 
-# Copy the entrypoint.sh script from the build environment
-COPY --from=build /usr/local/bin/entrypoint.sh /usr/local/bin/entrypoint.sh
-
 # Set execute permissions on entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/bin/entrypoint.sh
 
 # Expose port 80 for serving HTML content
 EXPOSE 80
 
 # Run the script to start Cloudflare Warp service and establish connection
-CMD ["/usr/local/bin/entrypoint.sh"]
+CMD ["/usr/bin/entrypoint.sh"]
