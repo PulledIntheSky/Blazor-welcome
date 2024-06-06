@@ -1,5 +1,5 @@
 const express = require('express');
-const fetch = require('node-fetch'); // Import the node-fetch library
+const fetch = require('node-fetch').default;; // Import the node-fetch library
 
 const app = express();
 const PORT = process.env.PORT || 3000;
