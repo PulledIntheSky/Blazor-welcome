@@ -23,6 +23,9 @@ RUN apt-get install -y cloudflare-warp
 # Cleanup
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Find the path to warp-cli
+RUN which warp-cli
+
 # Define the content of mdm.xml file using GitHub environment variables
 ARG AUTH_CLIENT_ID=$AUTH_CLIENT_ID
 ARG AUTH_CLIENT_SECRET=$AUTH_CLIENT_SECRET
@@ -42,9 +45,9 @@ RUN echo "<mdm>" \
 
 # Create entrypoint.sh script with required content
 RUN echo '#!/bin/bash' > /usr/local/bin/entrypoint.sh && \
-    echo 'warp-cli login' >> /usr/local/bin/entrypoint.sh && \
-    echo 'warp-cli start' >> /usr/local/bin/entrypoint.sh && \
-    echo 'cloudflared tunnel --config /etc/mdm.xml' >> /usr/local/bin/entrypoint.sh && \
+    echo '/path/to/warp-cli login' >> /usr/local/bin/entrypoint.sh && \
+    echo '/path/to/warp-cli start' >> /usr/local/bin/entrypoint.sh && \
+    echo '/usr/local/etc/cloudflared tunnel --config /etc/mdm.xml' >> /usr/local/bin/entrypoint.sh && \
     chmod +x /usr/local/bin/entrypoint.sh
 
 # Stage 2: Runtime environment
