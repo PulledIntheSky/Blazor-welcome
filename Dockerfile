@@ -1,17 +1,17 @@
-# Use an official lightweight Node.js image
-FROM node:14-alpine
+FROM alpine:latest
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+# Install required packages
+RUN apk --no-cache add wget unzip
 
-# Copy the index.html file from the root directory of your GitHub repository to the container
-COPY index.html .
+# Download and install Cloudflared
+RUN wget https://bin.equinox.io/c/VdrWdbjqyF/cloudflared-stable-linux-amd64.tgz && \
+    tar -xvzf cloudflared-stable-linux-amd64.tgz && \
+    mv ./cloudflared /usr/local/bin && \
+    chmod +x /usr/local/bin/cloudflared && \
+    rm -rf cloudflared-stable-linux-amd64.tgz
 
-# Expose port 80 to allow external access
-EXPOSE 80
+# Download HTML page from GitHub repository
+RUN wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/index.html -O /usr/src/app/index.html
 
-# Install a simple web server to serve the index.html file
-RUN npm install -g http-server
-
-# Start the web server to serve the index.html file when the container starts
-CMD [ "http-server", "-p", "80" ]
+# Start the Cloudflared tunnel and serve the index.html file
+CMD ["cloudflared", "tunnel", "run", "my-tunnel"]
