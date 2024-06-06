@@ -24,6 +24,8 @@ RUN wget https://github.com/cloudflare/cloudflared/releases/latest/download/clou
 # Install Cloudflare Warp
 RUN wget https://pkg.cloudflareclient.com/pubkey.gpg -O /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/cloudflare-client.list
+
+# Update package index and install Cloudflare Warp
 RUN apt-get update && apt-get install -y cloudflare-warp
 
 # Copy the credentials file and cert.pem from GitHub
