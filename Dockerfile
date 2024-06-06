@@ -21,12 +21,10 @@ USER root
 RUN wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/local/bin/cloudflared && \
     chmod +x /usr/local/bin/cloudflared && chown cloudflared_user:cloudflared_user /usr/local/bin/cloudflared
 
-# Add the Cloudflare repository entry
-RUN echo "deb https://pkg.cloudflareclient.com/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/cloudflare-client.list
-
-# Install Cloudflare Warp
-RUN wget https://pkg.cloudflareclient.com/pubkey.gpg -O - | apt-key add -
-RUN apt-get update && apt-get install -y cloudflare-warp
+# Install Cloudflare Warp directly from the package
+RUN wget https://pkg.cloudflareclient.com/cloudflare-warp_2023.6.1_amd64.deb -O cloudflare-warp.deb && \
+    dpkg -i cloudflare-warp.deb && \
+    rm cloudflare-warp.deb
 
 # Copy the credentials file and cert.pem from GitHub
 USER cloudflared_user
