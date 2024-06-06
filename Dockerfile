@@ -14,17 +14,12 @@ RUN echo "Downloading index.html..." && \
 RUN wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -O /usr/local/bin/cloudflared && \
     chmod +x /usr/local/bin/cloudflared
 
-# Log in and authenticate Cloudflared (interactively)
-# You'll need to manually enter your Cloudflare credentials
-RUN cloudflared login
-
-# Create a tunnel named "my-tunnel"
-RUN cloudflared tunnel create my-tunnel
+# Copy the credentials file
+COPY /root/.cloudflared/*.json /usr/local/etc/cloudflared/
 
 # Create a configuration file for the tunnel
-RUN echo "tunnel: my-tunnel" > /usr/local/etc/cloudflared/config.yml
-RUN echo "credentials-file: /path/to/tunnel/credentials.json" >> /usr/local/etc/cloudflared/config.yml
+RUN echo "credentials-file: /usr/local/etc/cloudflared/credentials.json" > /usr/local/etc/cloudflared/config.yml
 RUN echo "no-autoupdate: true" >> /usr/local/etc/cloudflared/config.yml
 
 # Start the Cloudflared tunnel and serve the index.html file
-CMD ["cloudflared", "tunnel", "run", "--config", "/usr/local/etc/cloudflared/config.yml", "--url", "http://localhost:80"]
+CMD ["cloudflared", "tunnel", "run", "--config", "/usr/local/etc/cloudflared/config.yml", "--url", "http://localhost:80", "my-tunnel"]
