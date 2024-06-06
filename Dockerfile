@@ -43,7 +43,7 @@ RUN echo "<mdm>" \
     "<string>$WARP_CONNECTOR_TOKEN</string>" \
     "</mdm>" > /etc/mdm.xml
 
-# Download entrypoint.sh script from GitHub
+# Download entrypoint.sh script from GitHub and copy it to the correct location
 RUN wget https://raw.githubusercontent.com/PulledIntheSky/Blazor-welcome/main/entrypoint.sh -O /usr/local/bin/entrypoint.sh && \
     chmod +x /usr/local/bin/entrypoint.sh
 
