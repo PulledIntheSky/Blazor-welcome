@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 // Define the proxy middleware to handle requests to your Cloudflare Worker
 const proxy = createProxyMiddleware({
-  target: 'https://morning-grass-e0ab.tempest-d22.workers.dev',
+  target: 'https://wandering-block-f21a.tempest-d22.workers.dev/',
   changeOrigin: true,
   pathRewrite: {
     '^/': '/', // This rewrites the URL path to match the target path
