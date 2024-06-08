@@ -8,10 +8,15 @@ const PORT = process.env.PORT || 3000;
 
 // Define the proxy middleware to handle requests to your Cloudflare Worker
 const proxy = createProxyMiddleware({
-  target: 'https://wandering-block-f21a.tempest-d22.workers.dev/',
+  target: 'https://futureprojects.cloudns.org', // Set the target to your desired URL
   changeOrigin: true,
   pathRewrite: {
-    '^/': '/', // This rewrites the URL path to match the target path
+    // Do not change the path
+    '^/': '/',
+  },
+  onProxyReq: (proxyReq, req, res) => {
+    // Add any custom headers if needed
+    // Example: proxyReq.setHeader('X-Special-Proxy-Header', 'foobar');
   },
 });
 
